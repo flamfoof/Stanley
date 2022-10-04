@@ -26,7 +26,10 @@ import fr.xgouchet.packageexplorer.details.adapter.AppInfoWithIcon
 import fr.xgouchet.packageexplorer.details.adapter.AppInfoWithSubtitle
 import fr.xgouchet.packageexplorer.details.adapter.AppInfoWithSubtitleAndAction
 import fr.xgouchet.packageexplorer.details.adapter.AppInfoWithSubtitleAndIcon
+<<<<<<< HEAD
 //import io.reactivex.ObservableEmitter
+=======
+>>>>>>> bddc55486de778a9f944b14904bee0a7ffb334b5
 import io.reactivex.rxjava3.core.ObservableEmitter
 import java.io.File
 import java.security.MessageDigest

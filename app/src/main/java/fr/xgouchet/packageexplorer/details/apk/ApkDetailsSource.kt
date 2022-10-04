@@ -16,9 +16,13 @@ import java.io.File
 class ApkDetailsSource(
     context: Context,
     val path: String
+<<<<<<< HEAD
 ) :
         DetailsSource(context),
     ObservableOnSubscribe<AppInfoViewModel> {
+=======
+) : DetailsSource(context), ObservableOnSubscribe<AppInfoViewModel> {
+>>>>>>> bddc55486de778a9f944b14904bee0a7ffb334b5
 
     companion object {
         const val PACKAGE_INFO_FLAGS = PackageManager.GET_ACTIVITIES

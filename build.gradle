@@ -8,11 +8,11 @@ buildscript {
         maven { url "https://jitpack.io" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://maven.google.com" }
-        jcenter()
     }
     dependencies {
         classpath Dependencies.ClassPaths.AndroidPlugin
         classpath Dependencies.ClassPaths.KotlinPlugin
+        classpath 'com.android.tools.build:gradle:7.3.0'
     }
 }
 
@@ -23,7 +23,6 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://maven.google.com" }
-        jcenter()
     }
 }
 

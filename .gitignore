@@ -8,6 +8,7 @@ local.properties
 .gradle/
 
 # User-specific configurations
+buildSrc/.idea/
 .idea/.name
 .idea/assetWizardSettings.xml
 .idea/compiler.xml
@@ -23,6 +24,7 @@ local.properties
 .idea/tasks.xml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea/inspectionProfiles
 *.iml
 
 # old code
