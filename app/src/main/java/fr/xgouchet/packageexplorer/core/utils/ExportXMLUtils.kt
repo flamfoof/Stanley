@@ -30,54 +30,50 @@ import javax.xml.transform.stream.StreamResult
 import kotlin.reflect.jvm.internal.impl.load.java.lazy.ContextKt
 import kotlin.system.measureNanoTime
 
-const val MANIFEST_FILE_NAME = "AndroidManifest.xml"
-
-fun exportManifestFromPackage(
-    info: PackageInfo,
-    context: Context
+fun exportManifestFromPackageXML(
+    info: PackageInfo
 ): Observable<File> {
     return Observable.fromCallable {
-        val name = exportedManifestName(info.packageName)
-        val apk = getPackageApk(info)
-
-        return@fromCallable exportManifestFromApkFile(name, apk, context)
+        val name = exportedManifestNameXML(info.packageName)
+        val apk = getPackageApkXML(info)
+        Log.i("manifest_command_export", "manif2: " + name)
+        return@fromCallable exportManifestFromApkFileXML(name, apk)
     }
 }
 
-fun exportManifestDomFromPackage(
+fun exportManifestDomFromPackageXML(
     info: PackageInfo
 ): Document {
     Log.i("manifest_search", "manif1: " + info.packageName);
 
-    return parseManifestFile(getPackageApk(info))
+    return parseManifestFile(getPackageApkXML(info))
 }
 
 // TODO replace with
-fun exportManifestFromApk(
+fun exportManifestFromApkXML(
     apk: File,
     context: Context
 ): Observable<File> {
     return Observable.fromCallable {
         val name = "${apk.nameWithoutExtension}_AndroidManifest.xml"
-        Log.i("manifest_search", "manif2: " + name)
-        return@fromCallable exportManifestFromApkFile(name, apk, context)
+
+        return@fromCallable exportManifestFromApkFileXML(name, apk)
     }
 }
 
-private fun exportManifestFromApkFile(name: String, apk: File, context: Context): File {
+ fun exportManifestFromApkFileXML(name: String, apk: File): File {
+     Log.i("manifest_command_export", "running exports");
     val doc = parseManifestFile(apk)
-    val destFile = File(context.cacheDir, name)
+    //val destFile = File(context.cacheDir, name)
     val destFile2 = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "manifests/" + name)
     File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "manifests/").mkdirs()
-    Log.i("manifest_search", "manifList: " + destFile.path)
-    writeXml(doc, destFile, context)
-    Log.i("manifest_search", "manif3: " + destFile)
-    Log.e("manifest_search", "manif33: " + destFile2)
-    writeXml(doc, destFile2, context)
-    return destFile
+     Log.i("manifest_command_export", "manifList: " + destFile2.path)
+    writeXmlXML(doc, destFile2)
+
+    return destFile2
 }
 
-private fun writeXml(doc: Document, output: File, activity: Context) {
+private fun writeXmlXML(doc: Document, output: File) {
     val transformerFactory = TransformerFactory.newInstance()
     val transformer = transformerFactory.newTransformer()
     //val activity2 = Activity
@@ -86,52 +82,18 @@ private fun writeXml(doc: Document, output: File, activity: Context) {
     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2")
     val source = DOMSource(doc)
     val result = StreamResult(output)
-    Log.i("manifest_search", "manifwrite3: " + output)
-    val permission =
-        ActivityCompat.checkSelfPermission(activity, permission.WRITE_EXTERNAL_STORAGE)
+    Log.i("manifest_command_write", "manifwrite3: " + output)
 
-    if (permission != PackageManager.PERMISSION_GRANTED) {
-        // We don't have permission so prompt the user
-//        ActivityCompat.requestPermissions(
-//            activity2,
-//            arrayOf(
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ),
-//            1
-//        )
-        Log.e("manifest_search", "WHAAAAT");
-    } else
-    {
-        Log.e("manifest_search", "Yes perms");
-    }
-        Log.e("manifest_search", "checkpoint for writing");
     transformer.transform(source, result)
-//    try{
-//
-//    } catch (e: TransformerException) {
-//        e.printStackTrace()
-//        Log.e("manifest_search", "error: " + e.printStackTrace());
-////        if (permission != PackageManager.PERMISSION_GRANTED) {
-////            // We don't have permission so prompt the user
-////            ActivityCompat.requestPermissions(
-////                activity,
-////                Manifest.permission.READ_EXTERNAL_STORAGE,
-////                Manifest.permission.WRITE_EXTERNAL_STORAGE
-////            );
-////        }
-//    } finally{
-//        Log.e("manifest_search", "finally");
-//    }
-
+    Log.i("manifest_command_write", "manifwrite3: " + "Completed Writing")
 }
 
-private fun exportedManifestName(packageName: String): String {
+fun exportedManifestNameXML(packageName: String): String {
     val cleaned = packageName.replace("\\.".toRegex(), "_")
     return "${cleaned}_AndroidManifest.xml"
 }
 
-private fun getPackageApk(info: PackageInfo): File {
+fun getPackageApkXML(info: PackageInfo): File {
     val srcPackage = info.applicationInfo.publicSourceDir
     return File(srcPackage)
 }
@@ -162,6 +124,6 @@ private fun parseManifestFile(apkFile: File): Document {
             zipFile?.close()
         }
     }
-    Log.i("manifest_search", "Parsed AndroidManifest from $apkFile in $duration ns")
+    Log.i("manifest_command_parse", "Parsed AndroidManifest from $apkFile in $duration ns")
     return doc ?: throw FileNotFoundException("Couldn't find manifest in apk")
 }

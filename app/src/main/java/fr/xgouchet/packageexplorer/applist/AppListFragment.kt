@@ -3,9 +3,11 @@ package fr.xgouchet.packageexplorer.applist
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -13,12 +15,19 @@ import androidx.appcompat.widget.SearchView
 import fr.xgouchet.packageexplorer.R
 import fr.xgouchet.packageexplorer.about.AboutActivity
 import fr.xgouchet.packageexplorer.applist.sort.AppSort
+import fr.xgouchet.packageexplorer.core.utils.*
 import fr.xgouchet.packageexplorer.details.apk.ApkDetailsActivity
 import fr.xgouchet.packageexplorer.launcher.LauncherDialog
 import fr.xgouchet.packageexplorer.oss.OSSActivity
 import fr.xgouchet.packageexplorer.ui.adapter.BaseAdapter
 import fr.xgouchet.packageexplorer.ui.mvp.list.BaseListFragment
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
+import android.content.pm.ApplicationInfo
+import android.os.Environment
+import java.io.File
+import java.io.PrintWriter
+
 
 class AppListFragment :
     BaseListFragment<AppViewModel, AppListPresenter>(),
@@ -27,6 +36,7 @@ class AppListFragment :
     override val adapter: BaseAdapter<AppViewModel> = AppAdapter(this, this)
     override val isFabVisible: Boolean = false
     override val fabIconOverride: Int? = null
+    var exportDisposable: Disposable? = null
 
     // region Fragment
 
@@ -73,6 +83,56 @@ class AppListFragment :
                 intent.type = APK_MIME_TYPE
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 startActivityForResult(intent, OPEN_APK_REQUEST)
+            }
+            R.id.export_all_xml -> {
+                Log.i("manifest_command", "Exporting all xmls")
+
+                var pm = context?.packageManager
+                var applications = pm?.getInstalledApplications(0)
+                val packages = pm?.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
+
+                if(pm != null && packages != null)
+                {
+                    var packageNameList = ArrayList<String>()
+                    var APKNameList = ArrayList<String>()
+                    var apkNamesz = ""
+                    var packageNamesz = ""
+                    for (pi in packages) {
+                        val ai = pm!!.getApplicationInfo(pi.packageName, 0)
+
+                        println(">>>>>>packages is<<<<<<<<" + ai.publicSourceDir)
+
+                        if (ai.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+                            System.out.println(">>>>>>packages is system package" + pi.packageName)
+                        } else {
+                            Log.i("manifest_command", "Package Name1: " + pi.packageName)
+                            var name = exportedManifestNameXML(pi.packageName)
+                            var apk = getPackageApkXML(pi)
+                            exportManifestFromApkFileXML(name, apk)
+                        }
+                        if (ai.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+                            System.out.println(">>>>>>packages is system package" + pi.packageName)
+                        } else {
+                            Log.i("package_support_command", "Package Name1: " + pi.packageName)
+                            packageNameList.add(pi.packageName)
+                            packageNamesz += pi.packageName + "\n"
+                            apkNamesz += (if(pi.applicationInfo != null)  pm.getApplicationLabel(pi.applicationInfo).toString() else "None") + "\n"
+                            //Log.i("appNameTest", pi.applicationInfo.na)
+                        }
+                    }
+                    var directoryOutput = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PackageNameAndAPK/")
+                    File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PackageNameAndAPK/").mkdirs()
+                    File(directoryOutput, "packageNames.txt").writeText(packageNamesz)
+                    File(directoryOutput, "apkNames.txt").writeText(apkNamesz)
+                    Log.e("package_support_command", "package: " + packageNamesz)
+                    Log.e("package_support_command", "apk: " + apkNamesz)
+                } else {
+                    Log.e("manifest_search", "wtf? Null? Why?");
+                }
+            }
+            R.id.play_exoplayer ->
+            {
+                Log.e("exoplayer_test", "starting exoplayer");
             }
             R.id.hide_system_apps -> presenter.setSystemAppsVisible(false)
             R.id.show_system_apps -> presenter.setSystemAppsVisible(true)

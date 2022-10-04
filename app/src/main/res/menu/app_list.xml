@@ -38,14 +38,18 @@
         </menu>
     </item>
 
-<item
-    android:id="@+id/open_apk"
-    android:title="@string/menu_open_apk"/>
-
+    <item
+        android:id="@+id/open_apk"
+        android:title="@string/menu_open_apk" />
+    <item
+        android:id="@+id/export_all_xml"
+        android:title="@string/menu_export_all_xml" />
+    <item
+        android:id="@+id/play_exoplayer"
+        android:title="Play Exoplayer" />
     <item
         android:id="@+id/hide_system_apps"
         android:title="@string/menu_hide_system_apps" />
-
     <item
         android:id="@+id/show_system_apps"
         android:title="@string/menu_show_system_apps" />

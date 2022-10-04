@@ -8,6 +8,8 @@ import android.content.pm.Signature
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
+import fr.xgouchet.packageexplorer.core.utils.exportManifestFromPackageXML
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,10 +43,11 @@ data class AppViewModel(
             val pm = context.packageManager
             try {
                 val pi = pm.getPackageInfo(packageName, 0)
+                Log.e("manifest_search", "package name: " + pi.packageName)
                 val ai = pm.getApplicationInfo(packageName, 0)
                 return fromAppInfo(pm, pi, ai)
             } catch (e: PackageManager.NameNotFoundException) {
-                Timber.e(e, "Error getting app info")
+                Log.e("mani_error", "Error getting app info")
                 return null
             }
         }
@@ -61,7 +64,11 @@ data class AppViewModel(
                     }
                     .filter { it != null }
                     .toTypedArray()
-
+            if(pi != null)
+            {
+                //Log.e("manifest_command_search", pi.packageName)
+                //exportManifestFromPackageXML(pi)
+            }
             return AppViewModel(packageName = ai.packageName,
                     title = pm.getApplicationLabel(ai).toString(),
                     icon = pm.getApplicationIcon(ai),
