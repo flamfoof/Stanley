@@ -8,10 +8,7 @@ import fr.xgouchet.packageexplorer.details.DetailsSource
 import fr.xgouchet.packageexplorer.details.adapter.AppInfoViewModel
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
-<<<<<<< HEAD
 import io.reactivex.rxjava3.annotations.NonNull
-=======
->>>>>>> bddc55486de778a9f944b14904bee0a7ffb334b5
 import java.io.File
 
 /**

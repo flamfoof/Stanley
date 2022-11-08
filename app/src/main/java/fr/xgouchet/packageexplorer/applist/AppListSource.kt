@@ -16,10 +16,10 @@ class AppListSource(val context: Context) :
 
     @Suppress("DEPRECATION")
     override fun subscribe(emitter: ObservableEmitter<AppViewModel>) {
-<<<<<<< HEAD
 
         applications = pm.getInstalledApplications(0)
-        val packages = pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
+        val packages =
+            pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
 
         for (pi in packages) {
             val app = AppViewModel.fromAppInfo(pm, pi, pi.applicationInfo)
@@ -34,37 +34,38 @@ class AppListSource(val context: Context) :
 
         emitter.onComplete()
     }
-     fun subscribeExport(emitter: ObservableEmitter<AppViewModel>) {
+
+    fun subscribeExport(emitter: ObservableEmitter<AppViewModel>) {
 
         applications = pm.getInstalledApplications(0)
-        val packages = pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
+        val packages =
+            pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
 
         for (pi in packages) {
             val app = AppViewModel.fromAppInfo(pm, pi, pi.applicationInfo)
 
-=======
-        val pm = context.packageManager
-        val applications = pm.getInstalledApplications(0)
-        val packages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
-        } else {
-            pm.getInstalledPackages(PackageManager.GET_SIGNATURES )
-        }
-
-        applications.forEach {ai ->
-            val pi = packages.firstOrNull() {
-                it.packageName == ai.packageName
+            val pm = context.packageManager
+            val applications = pm.getInstalledApplications(0)
+            val packages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                pm.getInstalledPackages(PackageManager.GET_SIGNATURES or PackageManager.GET_SIGNING_CERTIFICATES)
+            } else {
+                pm.getInstalledPackages(PackageManager.GET_SIGNATURES)
             }
-            val app = AppViewModel.fromAppInfo(pm, pi, ai)
->>>>>>> bddc55486de778a9f944b14904bee0a7ffb334b5
-            emitter.onNext(app)
-        }
+
+            applications.forEach { ai ->
+                val pi = packages.firstOrNull() {
+                    it.packageName == ai.packageName
+                }
+                val app = AppViewModel.fromAppInfo(pm, pi, ai)
+                emitter.onNext(app)
+            }
 
 //        applications.forEach {
 //            val app = AppViewModel.fromAppInfo(pm, null, it)
 //            emitter.onNext(app)
 //        }
 
-        emitter.onComplete()
+            emitter.onComplete()
+        }
     }
 }
